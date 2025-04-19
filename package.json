@@ -1,0 +1,40 @@
+{
+  "type": "module",
+  "name": "kambaz-node-server-app-cs5610-sp25",
+  "version": "1.0.0",
+  "description": "Node.js HTTP Web server for the Kambaz application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "Node",
+    "REST",
+    "Server",
+    "HTTP",
+    "Web",
+    "Development",
+    "CS5610"
+  ],
+  "author": "priyank patel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/priyank1510/Kambaz-node-server-app/issues"
+  },
+  "homepage": "https://github.com/priyank1510/Kambaz-node-server-app#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "mongodb": "5.5",
+    "mongoose": "^8.8.3",
+    "punycode": "^2.3.1",
+    "uuid": "^11.1.0"
+  },
+  "start": "node index.js"
+}
