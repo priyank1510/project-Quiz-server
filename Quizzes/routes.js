@@ -22,15 +22,27 @@ export default function QuizRoutes(app) {
 
   const findAllQuizzes = async (req, res) => {
     const { courseId } = req.params;
-    const quizzes = await dao.findAllQuizzes(courseId);
-    res.json(quizzes);
+    try {
+      const quizzes = await dao.findAllQuizzes(courseId);
+      res.json(quizzes);
+    } catch (error) {
+      console.error("Error finding all quizzes:", error);
+      res.status(500).json({ message: "Error finding quizzes", error: error.message });
+    }
   };
 
   const findQuizById = async (req, res) => {
     const { courseId, quizId } = req.params;
-    const quiz = await dao.findQuizById(courseId, quizId);
-    // console.log(quiz);
-    res.json(quiz);
+    try {
+      const quiz = await dao.findQuizById(courseId, quizId);
+      if (!quiz) {
+        return res.status(404).json({ message: "Quiz not found" });
+      }
+      res.json(quiz);
+    } catch (error) {
+      console.error("Error finding quiz by ID:", error);
+      res.status(500).json({ message: "Error finding quiz", error: error.message });
+    }
   };
 
   const updateQuiz = async (req, res) => {
@@ -43,6 +55,15 @@ export default function QuizRoutes(app) {
       console.log("Updating quiz:", { courseId, quizId, updateData });
       
       const status = await dao.updateQuiz(courseId, quizId, updateData);
+      
+      if (!status.acknowledged) {
+        return res.status(400).json({ message: "Failed to update quiz" });
+      }
+      
+      if (status.modifiedCount === 0) {
+        return res.status(404).json({ message: "Quiz not found or no changes made" });
+      }
+      
       res.json(status);
     } catch (error) {
       console.error("Error updating quiz:", error);
@@ -52,14 +73,33 @@ export default function QuizRoutes(app) {
 
   const deleteQuiz = async (req, res) => {
     const { courseId, quizId } = req.params;
-    const status = await dao.deleteQuiz(courseId, quizId);
-    res.send(status);
+    try {
+      const status = await dao.deleteQuiz(courseId, quizId);
+      
+      if (!status.acknowledged) {
+        return res.status(400).json({ message: "Failed to delete quiz" });
+      }
+      
+      if (status.deletedCount === 0) {
+        return res.status(404).json({ message: "Quiz not found" });
+      }
+      
+      res.send(status);
+    } catch (error) {
+      console.error("Error deleting quiz:", error);
+      res.status(500).json({ message: "Error deleting quiz", error: error.message });
+    }
   };
 
   const findQuizzesByPartialName = async (req, res) => {
     const { courseId, partialName } = req.params;
-    const quizzes = await dao.findQuizzesByPartialName(courseId, partialName);
-    res.json(quizzes);
+    try {
+      const quizzes = await dao.findQuizzesByPartialName(courseId, partialName);
+      res.json(quizzes);
+    } catch (error) {
+      console.error("Error finding quizzes by partial name:", error);
+      res.status(500).json({ message: "Error finding quizzes", error: error.message });
+    }
   };
 
   const findQuestionById = async (req, res) => {
@@ -71,6 +111,7 @@ export default function QuizRoutes(app) {
       }
       res.json(question);
     } catch (error) {
+      console.error("Error finding question by ID:", error);
       res.status(500).json({ message: error.message });
     }
   };

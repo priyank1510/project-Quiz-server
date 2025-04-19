@@ -22,7 +22,29 @@ const app = express();
 app.use(
     cors({
         credentials: true,
-        origin: process.env.NETLIFY_URL || "http://localhost:3000",
+        origin: function(origin, callback) {
+            // Allow requests with or without trailing slash
+            const allowedOrigins = [
+                process.env.NETLIFY_URL || "http://localhost:3000",
+                "https://project-quiz15.netlify.app",
+                "https://project-quiz15.netlify.app/"
+            ];
+            
+            // Check if the origin is in our allowed list (with or without trailing slash)
+            const isAllowed = allowedOrigins.some(allowed => {
+                // Remove trailing slash from both for comparison
+                const normalizedOrigin = origin ? origin.replace(/\/$/, '') : '';
+                const normalizedAllowed = allowed.replace(/\/$/, '');
+                return normalizedOrigin === normalizedAllowed;
+            });
+            
+            if (isAllowed || !origin) {
+                callback(null, true);
+            } else {
+                console.log(`Rejected CORS request from origin: ${origin}`);
+                callback(new Error('Not allowed by CORS'));
+            }
+        }
     })
 );
 
